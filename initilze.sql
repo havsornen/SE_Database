@@ -14,6 +14,7 @@ drop table if exists activity_members;
 drop table if exists activity_invitees;
 drop table if exists public_feed;
 drop table if exists private_feed;
+drop table if exists friend_request;
 drop table if exists activity;
 drop table if exists user;
 
@@ -21,7 +22,7 @@ drop table if exists user;
 
 
 create table user(
-	user_email varchar(150),
+	user_email varchar(150) UNIQUE,
     user_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, -- Auto kan bara vara på Keys. alltså Primary key.
     user_firstname varchar(50),
     user_lastname varchar(50),
@@ -89,4 +90,13 @@ create table public_feed(
     
     FOREIGN KEY (public_feed_contentID) REFERENCES activity(activity_ID), -- Future TODO: Change when Status is implemented. -- 
     FOREIGN KEY (public_feed_contentOwner) REFERENCES user(user_ID)
+);
+
+create table friend_request(
+	request_nr INT AUTO_INCREMENT PRIMARY KEY,
+	requester INT NOT NULL,
+	requestie INT NOT NULL,
+    
+    FOREIGN KEY (requester) REFERENCES user(user_ID),
+    FOREIGN KEY (requestie) REFERENCES user(user_ID)
 );
