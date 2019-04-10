@@ -34,7 +34,7 @@ create table user_relations(
 	relation_id INT AUTO_INCREMENT PRIMARY KEY,
     user_1 INT NOT NULL,
     user_2 INT NOT NULL,
-    relations_type ENUM('Vänner','Blockarad'),
+    relations_type ENUM('Vänner','Blockerad'),
     
     FOREIGN KEY (user_1) REFERENCES user(user_ID),
     FOREIGN KEY (user_2) REFERENCES user(user_ID)
