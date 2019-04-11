@@ -29,10 +29,13 @@ BEGIN
 END// DELIMITER ;
 
 SELECT create_user('bob@mail.com', 'ThisAPasswordYoCheckItOutBro', 'Bob', 'Marley', '1337101');
+SELECT create_user('Robby@mail.com', 'password', 'Bobby', 'Snobb', '34733');
 SELECT create_user('janne@mail.com', 'ThisIsNotAGoodPwd', 'Janne', 'Svensson', 'lol');
+SELECT create_user('erik@mail.com', 'watDisIs?', 'erik', 'Svensson', '21229');
 
-SELECT * FROM users, pwd;
-#DELETE FROM users WHERE 1;
+SELECT * FROM users INNER JOIN pwd ON users.usr_ID = pwd.FK_usr_ID;
+DELETE FROM pwd WHERE 1;
+DELETE FROM users WHERE 1;
 
 
 # There are three different return values which are represented accordingly
@@ -60,5 +63,16 @@ END// DELIMITER ;
 
 SELECT login('bob@mail.com', 'ThisAPasswordYoCheckItOutBro');
 
+
+# returns query with columns firstname and lastname
+DROP PROCEDURE IF EXISTS search;
+DELIMITER //
+CREATE PROCEDURE search (toFind VARCHAR(255))
+  BEGIN
+    SELECT users.usr_firstname, users.usr_lastname FROM users WHERE users.usr_firstname = toFind OR users.usr_lastname = toFind;
+  END //
+DELIMITER ;
+
+CALL search('Svensson');
 
 
