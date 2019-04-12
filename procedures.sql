@@ -2,7 +2,7 @@
 #SET SQL_SAFE_UPDATES = 0;
 
 # Checks if the email string exists in users table. Returns 1 for created and 0 for error.
-# NOTE: Only checks if the email string is empty.
+# NOTE: Only checks if the email and pwd string is empty.
 DROP FUNCTION IF EXISTS create_user;
 DELIMITER //
 CREATE FUNCTION create_user (mail VARCHAR(250), pwd VARCHAR(255), fName varchar(50), lName varchar(50), telNumber varchar(15))
@@ -64,6 +64,9 @@ CREATE PROCEDURE search (toFind VARCHAR(255))
     SELECT users.usr_firstname, users.usr_lastname FROM users WHERE users.usr_firstname = toFind OR users.usr_lastname = toFind;
   END //
 DELIMITER ;
+
+
+
 
 
 
