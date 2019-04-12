@@ -6,7 +6,7 @@
 
 */
 
-USE test; -- ## Change before execution ## --
+USE grp_pro; -- ## Change before execution ## --
 
 -- Drops all existing tables so the database structure get resteted. --
 drop table if exists usr_relations;
@@ -20,11 +20,7 @@ drop table if exists pwd;
 drop table if exists users;
 
 
-create table pwd(
-    FK_usr_ID INT,
-    usr_secret varchar(255),
-    FOREIGN KEY (FK_usr_ID) REFERENCES users(usr_ID)
-);
+
 
 create table users(
     usr_email varchar(150) UNIQUE,
