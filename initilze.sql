@@ -16,11 +16,15 @@ drop table if exists public_feed;
 drop table if exists private_feed;
 drop table if exists friend_request;
 drop table if exists activity;
--- password 
+drop table if exists pwd;
 drop table if exists users;
 
 
-
+create table pwd(
+    FK_usr_ID INT,
+    usr_secret varchar(255),
+    FOREIGN KEY (FK_usr_ID) REFERENCES users(usr_ID)
+);
 
 create table users(
     usr_email varchar(150) UNIQUE,
