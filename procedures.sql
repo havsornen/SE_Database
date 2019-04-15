@@ -1,5 +1,6 @@
 # Disables "must name PK" to delete object
-#SET SQL_SAFE_UPDATES = 0;
+SET SQL_SAFE_UPDATES = 0;
+USE grp_pro; 
 
 # Checks if the email string exists in users table. Returns 1 for created and 0 for error.
 # NOTE: Only checks if the email and pwd string is empty.
@@ -67,6 +68,42 @@ DELIMITER ;
 
 
 
+# whoAmI/Janne(1) requests toAdd/Bob(3)
+# Checks if relations already exists (if it does they are either friends or someone have blocked the other)
+# Checks if request already exists.
+DROP PROCEDURE IF EXISTS add_friend;
+DELIMITER //
+CREATE PROCEDURE add_friend (whoAmI INT, toAdd INT)
+  BEGIN
+	IF NOT EXISTS (SELECT usr_relations.usr_1, usr_relations.usr_2
+	FROM usr_relations WHERE usr_1 = whoAmI AND usr_2 = toAdd OR usr_2 = whoAmI AND usr_1 = toAdd)
+	THEN
+		IF NOT EXISTS(SELECT friend_request.requester, friend_request.requestie  
+		FROM friend_request WHERE requestie = whoAmI AND requester = toAdd OR requestie = toAdd AND requester = whoAmI)
+		THEN
+			INSERT INTO friend_request (requester, requestie) VALUES (whoAmI, toAdd);
+		END IF;
+	END IF;    
+  END //
+DELIMITER ;
 
 
+# Requestie (Bob/whoAmI) will accept requester (Janne/toAdd). ONLY Bob can accept!
+# Then adds to usr_relations and removes from friend_request
+DROP PROCEDURE IF EXISTS accept_friend_request;
+DELIMITER //
+CREATE PROCEDURE accept_friend_request (whoAmI VARCHAR(255), toAdd VARCHAR(255))
+  BEGIN
+  IF EXISTS(SELECT friend_request.requester, friend_request.requestie FROM friend_request 
+  WHERE requestie = whoAmI AND requester = toAdd)
+	THEN
+		IF NOT EXISTS(SELECT * FROM usr_relations 
+        WHERE usr_1 = whoAmI AND usr_2 = toAdd OR usr_1 = toAdd AND usr_2 = whoAmI)
+			THEN
+				INSERT INTO usr_relations (usr_1, usr_2, relations_type) VALUES (whoAmI, toAdd, 1);
+				DELETE FROM friend_request WHERE friend_request.requestie = whoAmI AND friend_request.requester = toAdd;
+        END IF;
+   END IF;
+  END //
+DELIMITER ;
 

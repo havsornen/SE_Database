@@ -16,7 +16,7 @@ drop table if exists public_feed;
 drop table if exists private_feed;
 drop table if exists friend_request;
 drop table if exists activity;
--- password 
+
 drop table if exists users;
 
 
