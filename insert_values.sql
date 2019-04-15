@@ -9,6 +9,9 @@ SELECT create_user('lordofthunder@mail.com', 'DoINeedThis?', 'Thor', 'Son of Odi
 SELECT create_user('spiderman@mail.com', '!Sup3rS3cr3t!', 'Peter', 'Parker', '291535');
 SELECT create_user('antman@mail.com', 'itsMrAntToYou', 'Scott', 'Lang', '477');
 SELECT create_user('blackpanter@mail.com', 'Wakanda_4ever', 'T', 'Challa', '21229');
+
+SELECT create_user('headmaster@mail.com', 'Chocolatefrogs', 'Albus', 'Dumbledore', '1');
+SELECT create_user('gryffindor@mail.com', 'quidditch', 'Minerva', 'McGonagall', '2');
 -- SELECT * FROM users INNER JOIN pwd ON users.usr_ID = pwd.FK_usr_ID;
 -- SELECT change_password(10, 'newpwd', 'Wakanda_4ever', 'Wakanda_4ever');
 
