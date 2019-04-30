@@ -41,3 +41,10 @@ CALL accept_friend_request(15, 11); # Dobby(15) accepts Albus(11)
 CALL accept_friend_request(12, 14); # Minerva(12) accepts Harry(14)
 CALL accept_friend_request(15, 14); # Dobby(15) accepts Harry(14)
 -- SELECT * FROM usr_relations;
+
+SELECT create_activity(11, 'Hogsmeade', '2019-05-03 15:13:37', '2019-05-03 18:26:14', '1', '', '');
+SELECT create_activity(11, 'Diagonally Alley', '2019-05-03 15:13:37', '2019-05-03 18:26:14', '1', '', '');
+SELECT * FROM activity;
+
+SELECT add_invitee(12, 'Hogsmeade', 11);
+SELECT * FROM activity_invitees;
