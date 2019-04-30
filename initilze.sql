@@ -47,6 +47,7 @@ create table activity(
     activity_title varchar(50) NOT NULL,
     activity_start DATETIME NOT NULL,
     activity_end DATETIME,
+    activity_created DATETIME,
     activity_type varchar(50),
     activity_permission ENUM('Inbjudna enbart', 'Vänner enbart', 'Alla välkommna') NOT NULL,
     
