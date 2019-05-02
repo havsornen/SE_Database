@@ -253,5 +253,34 @@ CREATE PROCEDURE activity_response (whoAmI VARCHAR(255), activity INT(11), respo
 DELIMITER ;
 
 
+# Returns: 0 if Error, 1 if relations_type has changed, 2 if relation have been removed.
+DROP FUNCTION IF EXISTS remove_friend;
+DELIMITER //
+CREATE FUNCTION remove_friend (whoAmI VARCHAR(255), to_remove VARCHAR(255), choice INT(11))
+RETURNS INT
+NOT DETERMINISTIC
+  BEGIN
+	DECLARE result INT(11);
+    SET result = 0;
+    
+	  IF (choice = 2 OR choice = 1)
+	  THEN
+		SET result = 1;
+		UPDATE usr_relations SET usr_relations.relations_type = choice 
+			WHERE usr_relations.usr_1 = whoAmI AND usr_relations.usr_2 = to_remove 
+            OR usr_relations.usr_2 = whoAmI AND usr_relations.usr_2 = to_remove;
+	  ELSEIF (choice = 3)
+	  THEN
+		SET result = 2;
+		DELETE FROM usr_relations 
+        WHERE usr_relations.usr_1 = whoAmI AND usr_relations.usr_2 = to_remove 
+        OR usr_relations.usr_2 = whoAmI AND usr_relations.usr_2 = to_remove; 
+	  END IF;
+      
+	RETURN result;
+  END //
+DELIMITER ;
+
+
 
 -- USE grp_pro; 
