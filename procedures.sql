@@ -254,9 +254,9 @@ DELIMITER ;
 
 
 # Returns: 0 if Error, 1 if relations_type has changed, 2 if relation have been removed.
-DROP FUNCTION IF EXISTS remove_friend;
+DROP FUNCTION IF EXISTS change_relation_status;
 DELIMITER //
-CREATE FUNCTION remove_friend (whoAmI VARCHAR(255), to_remove VARCHAR(255), choice INT(11))
+CREATE FUNCTION change_relation_status (whoAmI VARCHAR(255), to_remove VARCHAR(255), choice INT(11))
 RETURNS INT
 NOT DETERMINISTIC
   BEGIN
@@ -280,6 +280,21 @@ NOT DETERMINISTIC
 	RETURN result;
   END //
 DELIMITER ;
+
+
+# users (whoAmI) will decline friend request from requester (toDecline).
+DROP PROCEDURE IF EXISTS decline_friend_request;
+DELIMITER //
+CREATE PROCEDURE decline_friend_request (whoAmI VARCHAR(255), toDecline VARCHAR(255))
+  BEGIN
+  IF EXISTS(SELECT friend_request.requester, friend_request.requestie FROM friend_request 
+  WHERE requestie = whoAmI AND requester = toDecline)
+	THEN
+		DELETE FROM friend_request WHERE friend_request.requestie = whoAmI AND friend_request.requester = toDecline;
+   END IF;
+  END //
+DELIMITER ;
+
 
 
 
