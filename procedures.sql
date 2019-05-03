@@ -216,10 +216,83 @@ CREATE PROCEDURE get_friend_mail (whoAmI VARCHAR(255))
 DELIMITER ;
 
 
+# put usr_ID in parameter and both non accepted and accepted events will be displayed.
+DROP PROCEDURE IF EXISTS get_activities;
+DELIMITER //
+CREATE PROCEDURE get_activities (whoAmI VARCHAR(255))
+  BEGIN
+    SELECT * FROM activity ac 
+    WHERE ac.activity_ID IN 
+		(SELECT ai.activity_ID FROM activity_invitees ai 
+		WHERE usr_ID = whoAmI);
+  END //
+DELIMITER ;
 
 
+# Inserts or updates (depending on if a response has been made earlier) activity_members with the response that is given.
+# If reponse is "Deltar inte" (enum 2) that row/usr will be removed in activity_invitees.
+DROP PROCEDURE IF EXISTS activity_response;
+DELIMITER //
+CREATE PROCEDURE activity_response (whoAmI VARCHAR(255), activity INT(11), response INT(11))
+  BEGIN
+	IF NOT EXISTS (SELECT * FROM activity_members am WHERE am.usr_ID = whoAmI AND am.activity_ID = activity)
+    THEN
+		INSERT INTO activity_members (activity_ID, usr_ID, activity_member_type)
+        VALUES (activity, whoAmI, response);
+	ELSE
+		UPDATE activity_members 
+			SET  activity_member_type = response 
+			WHERE activity_ID = activity AND usr_ID = whoAmI;
+    END IF;
+    
+    IF (response = 2)
+	THEN
+		DELETE FROM activity_invitees WHERE activity_ID = activity AND usr_ID = whoAmI;
+	END IF;    
+  END //
+DELIMITER ;
 
 
+# Returns: 0 if Error, 1 if relations_type has changed, 2 if relation have been removed.
+DROP FUNCTION IF EXISTS change_relation_status;
+DELIMITER //
+CREATE FUNCTION change_relation_status (whoAmI VARCHAR(255), to_remove VARCHAR(255), choice INT(11))
+RETURNS INT
+NOT DETERMINISTIC
+  BEGIN
+	DECLARE result INT(11);
+    SET result = 0;
+    
+	  IF (choice = 2 OR choice = 1)
+	  THEN
+		SET result = 1;
+		UPDATE usr_relations SET usr_relations.relations_type = choice 
+			WHERE usr_relations.usr_1 = whoAmI AND usr_relations.usr_2 = to_remove 
+            OR usr_relations.usr_2 = whoAmI AND usr_relations.usr_2 = to_remove;
+	  ELSEIF (choice = 3)
+	  THEN
+		SET result = 2;
+		DELETE FROM usr_relations 
+        WHERE usr_relations.usr_1 = whoAmI AND usr_relations.usr_2 = to_remove 
+        OR usr_relations.usr_2 = whoAmI AND usr_relations.usr_2 = to_remove; 
+	  END IF;
+      
+	RETURN result;
+  END //
+DELIMITER ;
 
 
--- USE grp_pro; 
+# users (whoAmI) will decline friend request from requester (toDecline).
+DROP PROCEDURE IF EXISTS decline_friend_request;
+DELIMITER //
+CREATE PROCEDURE decline_friend_request (whoAmI VARCHAR(255), toDecline VARCHAR(255))
+  BEGIN
+  IF EXISTS(SELECT friend_request.requester, friend_request.requestie FROM friend_request 
+  WHERE requestie = whoAmI AND requester = toDecline)
+	THEN
+		DELETE FROM friend_request WHERE friend_request.requestie = whoAmI AND friend_request.requester = toDecline;
+   END IF;
+  END //
+DELIMITER ;
+
+
