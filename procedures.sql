@@ -296,6 +296,3 @@ CREATE PROCEDURE decline_friend_request (whoAmI VARCHAR(255), toDecline VARCHAR(
 DELIMITER ;
 
 
-
-
--- USE grp_pro; 
